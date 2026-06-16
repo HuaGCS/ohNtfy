@@ -1,0 +1,7 @@
+{
+  "name": "ntfy-entry",
+  "version": "1.0.0",
+  "description": "ntfy push notification client - entry module",
+  "main": "",
+  "dependencies": {}
+}

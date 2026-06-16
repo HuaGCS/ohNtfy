@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+oh_modules/
+
+# Build output
+entry/build/
+entry/.preview/
+build/
+output/
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Hvigor
+.hvigor/
+local.properties
+
+# Ohpm
+oh_modules/
+
+# Certificates & Keystores (sensitive)
+*.jks
+*.keystore
+*.cer
+*.pem
+*.p7b
+ntfy-profile.json
+
+# Debug / temp output
+*.txt
+*.bat
+*.ps1
+package-lock.json
+.appanalyzer/
+.npmrc
+setup-hmos-sdk.js
+build-ntfy.sh
+install-ntfy.sh
+sign-ntfy.sh

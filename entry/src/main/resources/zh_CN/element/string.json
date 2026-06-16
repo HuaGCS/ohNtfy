@@ -1,0 +1,336 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "ntfy"
+    },
+    {
+      "name": "reason_internet",
+      "value": "需要网络访问权限以连接 ntfy 服务器"
+    },
+    {
+      "name": "reason_notification",
+      "value": "需要通知权限以显示推送通知"
+    },
+    {
+      "name": "reason_background",
+      "value": "需要后台运行权限以接收推送通知"
+    },
+    {
+      "name": "subscribe",
+      "value": "订阅"
+    },
+    {
+      "name": "unsubscribe",
+      "value": "取消订阅"
+    },
+    {
+      "name": "add_topic",
+      "value": "添加主题"
+    },
+    {
+      "name": "topic_url",
+      "value": "主题地址"
+    },
+    {
+      "name": "topic_url_hint",
+      "value": "例如：https://ntfy.sh/mytopic"
+    },
+    {
+      "name": "display_name_optional",
+      "value": "显示名称（可选）"
+    },
+    {
+      "name": "my_topic_hint",
+      "value": "我的主题"
+    },
+    {
+      "name": "no_subscriptions",
+      "value": "暂无订阅"
+    },
+    {
+      "name": "tap_to_add",
+      "value": "点击 + 订阅主题"
+    },
+    {
+      "name": "just_now",
+      "value": "刚刚"
+    },
+    {
+      "name": "minutes_ago",
+      "value": "分钟前"
+    },
+    {
+      "name": "hours_ago",
+      "value": "小时前"
+    },
+    {
+      "name": "days_ago",
+      "value": "天前"
+    },
+    {
+      "name": "delete_subscription_title",
+      "value": "删除订阅？"
+    },
+    {
+      "name": "delete_subscription_message",
+      "value": "消息将被移除，轮询将停止。"
+    },
+    {
+      "name": "no_messages",
+      "value": "暂无消息"
+    },
+    {
+      "name": "publish_or_wait",
+      "value": "发布一条消息或等待新消息"
+    },
+    {
+      "name": "loading_messages",
+      "value": "正在加载消息..."
+    },
+    {
+      "name": "message_copied",
+      "value": "消息已复制"
+    },
+    {
+      "name": "invalid_url_format",
+      "value": "URL 格式无效"
+    },
+    {
+      "name": "failed_to_connect",
+      "value": "连接失败，请检查地址后重试"
+    },
+    {
+      "name": "server_label",
+      "value": "服务器"
+    },
+    {
+      "name": "topic_label",
+      "value": "主题"
+    },
+    {
+      "name": "publish",
+      "value": "发布"
+    },
+    {
+      "name": "title_hint",
+      "value": "标题（可选）"
+    },
+    {
+      "name": "message_hint",
+      "value": "输入消息..."
+    },
+    {
+      "name": "priority_label",
+      "value": "优先级："
+    },
+    {
+      "name": "priority_min",
+      "value": "最低"
+    },
+    {
+      "name": "priority_low",
+      "value": "低"
+    },
+    {
+      "name": "priority_default",
+      "value": "普通"
+    },
+    {
+      "name": "priority_high",
+      "value": "高"
+    },
+    {
+      "name": "priority_max",
+      "value": "最高"
+    },
+    {
+      "name": "default_server",
+      "value": "默认服务器"
+    },
+    {
+      "name": "save_server",
+      "value": "保存服务器"
+    },
+    {
+      "name": "settings",
+      "value": "设置"
+    },
+    {
+      "name": "polling",
+      "value": "轮询"
+    },
+    {
+      "name": "polling_interval",
+      "value": "轮询间隔（秒）："
+    },
+    {
+      "name": "save_interval",
+      "value": "保存间隔"
+    },
+    {
+      "name": "notifications",
+      "value": "通知"
+    },
+    {
+      "name": "enable_notifications",
+      "value": "启用通知"
+    },
+    {
+      "name": "about",
+      "value": "关于"
+    },
+    {
+      "name": "about_ntfy",
+      "value": "关于 ntfy"
+    },
+    {
+      "name": "version",
+      "value": "版本"
+    },
+    {
+      "name": "sdk",
+      "value": "SDK"
+    },
+    {
+      "name": "architecture",
+      "value": "架构"
+    },
+    {
+      "name": "architecture_value",
+      "value": "ArkTS + ArkUI"
+    },
+    {
+      "name": "source_code",
+      "value": "源代码"
+    },
+    {
+      "name": "what_is_ntfy",
+      "value": "什么是 ntfy？"
+    },
+    {
+      "name": "ntfy_description",
+      "value": "ntfy（读作notify）是一个基于 HTTP 的简单发布-订阅通知服务。它允许您通过 HTTP PUT/POST 向手机或桌面发送推送通知。订阅主题即可接收带有自定义标题、优先级和标签的消息。"
+    },
+    {
+      "name": "ntfy_source",
+      "value": "来源：https://ntfy.sh"
+    },
+    {
+      "name": "disclaimer_label",
+      "value": "免责声明"
+    },
+    {
+      "name": "disclaimer_text",
+      "value": "这是 ntfy.sh 的第三方非官方客户端。本应用与 ntfy 项目无任何关联、认可或赞助关系。所有 ntfy 相关商标和版权归其各自所有者所有。"
+    },
+    {
+      "name": "app_description",
+      "value": "ntfy.sh 的鸿蒙客户端"
+    },
+    {
+      "name": "version_name",
+      "value": "1.0.0"
+    },
+    {
+      "name": "subscribed_topics",
+      "value": "已订阅主题"
+    },
+    {
+      "name": "delete",
+      "value": "删除"
+    },
+    {
+      "name": "cancel",
+      "value": "取消"
+    },
+    {
+      "name": "confirm",
+      "value": "确认"
+    },
+    {
+      "name": "connecting",
+      "value": "连接中..."
+    },
+    {
+      "name": "connected",
+      "value": "已连接"
+    },
+    {
+      "name": "disconnected",
+      "value": "已断开"
+    },
+    {
+      "name": "error_occurred",
+      "value": "发生错误"
+    },
+    {
+      "name": "input_title",
+      "value": "标题"
+    },
+    {
+      "name": "input_message",
+      "value": "消息"
+    },
+    {
+      "name": "preview_format",
+      "value": "服务器：%s  主题：%s"
+    },
+    {
+      "name": "connection_status",
+      "value": "连接状态"
+    },
+    {
+      "name": "ws_connected_count",
+      "value": "%d 已连接"
+    },
+    {
+      "name": "ws_not_connected",
+      "value": "未连接"
+    },
+    {
+      "name": "notification_settings",
+      "value": "系统通知设置"
+    },
+    {
+      "name": "server_saved",
+      "value": "服务器已保存"
+    },
+    {
+      "name": "interval_saved",
+      "value": "轮询间隔已保存"
+    },
+    {
+      "name": "notifications_enabled_toast",
+      "value": "通知已启用"
+    },
+    {
+      "name": "notifications_disabled_toast",
+      "value": "通知已关闭"
+    },
+    {
+      "name": "connection_protocol",
+      "value": "连接协议"
+    },
+    {
+      "name": "protocol_ws",
+      "value": "WebSocket"
+    },
+    {
+      "name": "protocol_json",
+      "value": "JSON 轮询"
+    },
+    {
+      "name": "protocol_ws_desc",
+      "value": "实时推送，延迟低"
+    },
+    {
+      "name": "protocol_json_desc",
+      "value": "轮询模式，兼容性好"
+    },
+    {
+      "name": "protocol_saved",
+      "value": "连接协议已切换"
+    }
+  ]
+}

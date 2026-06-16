@@ -1,0 +1,10 @@
+{
+  "name": "ntfy-harmony",
+  "version": "1.0.0",
+  "description": "ntfy push notification client",
+  "ohos": {
+    "org": "example"
+  },
+  "modelVersion": "5.0.0",
+  "dependencies": {}
+}

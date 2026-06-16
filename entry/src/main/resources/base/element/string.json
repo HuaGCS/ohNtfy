@@ -1,0 +1,336 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "ntfy"
+    },
+    {
+      "name": "reason_internet",
+      "value": "Need internet access to connect to ntfy servers"
+    },
+    {
+      "name": "reason_notification",
+      "value": "Need notification permission to display push notifications"
+    },
+    {
+      "name": "reason_background",
+      "value": "Need background running to receive push notifications"
+    },
+    {
+      "name": "subscribe",
+      "value": "Subscribe"
+    },
+    {
+      "name": "unsubscribe",
+      "value": "Unsubscribe"
+    },
+    {
+      "name": "add_topic",
+      "value": "Add Topic"
+    },
+    {
+      "name": "topic_url",
+      "value": "Topic URL"
+    },
+    {
+      "name": "topic_url_hint",
+      "value": "e.g., https://ntfy.sh/mytopic"
+    },
+    {
+      "name": "display_name_optional",
+      "value": "Display Name (optional)"
+    },
+    {
+      "name": "my_topic_hint",
+      "value": "My Topic"
+    },
+    {
+      "name": "no_subscriptions",
+      "value": "No subscriptions yet"
+    },
+    {
+      "name": "tap_to_add",
+      "value": "Tap + to subscribe to a topic"
+    },
+    {
+      "name": "just_now",
+      "value": "just now"
+    },
+    {
+      "name": "minutes_ago",
+      "value": "m ago"
+    },
+    {
+      "name": "hours_ago",
+      "value": "h ago"
+    },
+    {
+      "name": "days_ago",
+      "value": "d ago"
+    },
+    {
+      "name": "delete_subscription_title",
+      "value": "Delete Subscription?"
+    },
+    {
+      "name": "delete_subscription_message",
+      "value": "Messages will be removed and polling will stop."
+    },
+    {
+      "name": "no_messages",
+      "value": "No messages yet"
+    },
+    {
+      "name": "publish_or_wait",
+      "value": "Publish a message or wait for new ones"
+    },
+    {
+      "name": "loading_messages",
+      "value": "Loading messages..."
+    },
+    {
+      "name": "message_copied",
+      "value": "Message copied"
+    },
+    {
+      "name": "invalid_url_format",
+      "value": "Invalid URL format"
+    },
+    {
+      "name": "failed_to_connect",
+      "value": "Failed to connect. Please check the URL and try again."
+    },
+    {
+      "name": "server_label",
+      "value": "Server"
+    },
+    {
+      "name": "topic_label",
+      "value": "Topic"
+    },
+    {
+      "name": "publish",
+      "value": "Publish"
+    },
+    {
+      "name": "title_hint",
+      "value": "Title (optional)"
+    },
+    {
+      "name": "message_hint",
+      "value": "Type a message..."
+    },
+    {
+      "name": "priority_label",
+      "value": "Priority:"
+    },
+    {
+      "name": "priority_min",
+      "value": "min"
+    },
+    {
+      "name": "priority_low",
+      "value": "low"
+    },
+    {
+      "name": "priority_default",
+      "value": "default"
+    },
+    {
+      "name": "priority_high",
+      "value": "high"
+    },
+    {
+      "name": "priority_max",
+      "value": "max"
+    },
+    {
+      "name": "default_server",
+      "value": "Default Server"
+    },
+    {
+      "name": "save_server",
+      "value": "Save Server"
+    },
+    {
+      "name": "settings",
+      "value": "Settings"
+    },
+    {
+      "name": "polling",
+      "value": "Polling"
+    },
+    {
+      "name": "polling_interval",
+      "value": "Polling Interval (seconds):"
+    },
+    {
+      "name": "save_interval",
+      "value": "Save Interval"
+    },
+    {
+      "name": "notifications",
+      "value": "Notifications"
+    },
+    {
+      "name": "enable_notifications",
+      "value": "Enable Notifications"
+    },
+    {
+      "name": "about",
+      "value": "About"
+    },
+    {
+      "name": "about_ntfy",
+      "value": "About ntfy"
+    },
+    {
+      "name": "version",
+      "value": "Version"
+    },
+    {
+      "name": "sdk",
+      "value": "SDK"
+    },
+    {
+      "name": "architecture",
+      "value": "Architecture"
+    },
+    {
+      "name": "architecture_value",
+      "value": "ArkTS + ArkUI"
+    },
+    {
+      "name": "source_code",
+      "value": "Source Code"
+    },
+    {
+      "name": "what_is_ntfy",
+      "value": "What is ntfy?"
+    },
+    {
+      "name": "ntfy_description",
+      "value": "ntfy (pronounced \"notify\") is a simple HTTP-based pub-sub notification service. It allows you to send push notifications to your phone or desktop via HTTP PUT/POST. Subscribe to topics and receive messages with custom titles, priorities, and tags."
+    },
+    {
+      "name": "ntfy_source",
+      "value": "Source: https://ntfy.sh"
+    },
+    {
+      "name": "disclaimer_label",
+      "value": "Disclaimer"
+    },
+    {
+      "name": "disclaimer_text",
+      "value": "This is an unofficial third-party client for ntfy.sh. This application is not affiliated with, endorsed, or sponsored by the ntfy project. All ntfy-related trademarks and copyrights belong to their respective owners."
+    },
+    {
+      "name": "app_description",
+      "value": "HarmonyOS client for ntfy.sh"
+    },
+    {
+      "name": "version_name",
+      "value": "1.0.0"
+    },
+    {
+      "name": "subscribed_topics",
+      "value": "Subscribed Topics"
+    },
+    {
+      "name": "delete",
+      "value": "Delete"
+    },
+    {
+      "name": "cancel",
+      "value": "Cancel"
+    },
+    {
+      "name": "confirm",
+      "value": "Confirm"
+    },
+    {
+      "name": "connecting",
+      "value": "Connecting..."
+    },
+    {
+      "name": "connected",
+      "value": "Connected"
+    },
+    {
+      "name": "disconnected",
+      "value": "Disconnected"
+    },
+    {
+      "name": "error_occurred",
+      "value": "An error occurred"
+    },
+    {
+      "name": "input_title",
+      "value": "Title"
+    },
+    {
+      "name": "input_message",
+      "value": "Message"
+    },
+    {
+      "name": "preview_format",
+      "value": "Server: %s  Topic: %s"
+    },
+    {
+      "name": "connection_status",
+      "value": "Connection Status"
+    },
+    {
+      "name": "ws_connected_count",
+      "value": "%d connected"
+    },
+    {
+      "name": "ws_not_connected",
+      "value": "Not connected"
+    },
+    {
+      "name": "notification_settings",
+      "value": "System Notification Settings"
+    },
+    {
+      "name": "server_saved",
+      "value": "Server saved"
+    },
+    {
+      "name": "interval_saved",
+      "value": "Polling interval saved"
+    },
+    {
+      "name": "notifications_enabled_toast",
+      "value": "Notifications enabled"
+    },
+    {
+      "name": "notifications_disabled_toast",
+      "value": "Notifications disabled"
+    },
+    {
+      "name": "connection_protocol",
+      "value": "Connection Protocol"
+    },
+    {
+      "name": "protocol_ws",
+      "value": "WebSocket"
+    },
+    {
+      "name": "protocol_json",
+      "value": "JSON Polling"
+    },
+    {
+      "name": "protocol_ws_desc",
+      "value": "Real-time push, low latency"
+    },
+    {
+      "name": "protocol_json_desc",
+      "value": "Polling mode, better compatibility"
+    },
+    {
+      "name": "protocol_saved",
+      "value": "Protocol switched"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "ntfy-harmony",
+  "version": "1.0.0",
+  "description": "ntfy client for HarmonyOS NEXT",
+  "scripts": {},
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@ohos/hos-sdkmanager-common": "^2.24.3",
+    "@ohos/hvigor": "^6.23.6",
+    "@ohos/hvigor-ohos-plugin": "^6.23.6",
+    "@ohos/sdkmanager-common": "^2.24.3"
+  },
+  "dependencies": {
+    "fast-uri": "^4.0.0",
+    "jsonfile": "^6.2.1"
+  }
+}
