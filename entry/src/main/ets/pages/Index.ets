@@ -114,6 +114,11 @@ struct Index {
     this.subscriptions = subs;
     this.totalCount = subs.length;
     this.updateConnectedCount();
+    // 调试：打印每个订阅是否显示未读
+    for (const s of subs) {
+      const unread = s.lastMessage && (s.lastReadId === undefined || s.lastMessage.id !== s.lastReadId);
+      console.info(`[Index] sub: ${s.topic}, lastMsgId=${s.lastMessage?.id}, lastReadId=${s.lastReadId}, unread=${unread}`);
+    }
   }
 
   connectAllWs(): void {
@@ -461,7 +466,7 @@ struct Index {
                       Column() {
                         Text(sub.displayName || sub.topic)
                           .fontSize(16)
-                          .fontWeight((sub.lastReadId !== undefined && sub.lastMessage?.id !== sub.lastReadId) ? FontWeight.Bold : FontWeight.Medium)
+                          .fontWeight((sub.lastMessage && (sub.lastReadId === undefined || sub.lastMessage.id !== sub.lastReadId)) ? FontWeight.Bold : FontWeight.Medium)
                           .lineHeight(22)
                           .textOverflow({ overflow: TextOverflow.Ellipsis })
                           .maxLines(1);
@@ -503,7 +508,7 @@ struct Index {
                     .onClick(() => this.navigateToTopicDetail(sub));
 
                     // 未读绿色圆点
-                    if (sub.lastReadId !== undefined && sub.lastMessage?.id !== sub.lastReadId) {
+                    if (sub.lastMessage && (sub.lastReadId === undefined || sub.lastMessage.id !== sub.lastReadId)) {
                       Column()
                         .width(10)
                         .height(10)
@@ -525,7 +530,7 @@ struct Index {
                   },
                   edgeEffect: SwipeEdgeEffect.Spring
                 });
-              }, (sub: TopicSubscription) => sub.id + '_' + (sub.lastMessage?.id ?? 'none'));
+              }, (sub: TopicSubscription) => sub.id + '_' + (sub.lastMessage?.id ?? 'none') + '_' + (sub.lastReadId ?? 'none'));
             }
             .width('100%')
             .layoutWeight(1)

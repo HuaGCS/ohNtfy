@@ -40,6 +40,12 @@ export default class EntryAbility extends UIAbility {
     globalMessageCacheService = this.messageCacheService;
     globalWebSocketService = this.websocketService;
 
+    // 关联 BackgroundTaskService 与其他服务（用于常驻通知更新）
+    this.backgroundTaskService.setServices(
+      this.notificationService,
+      this.subscriptionManager
+    );
+
     // 注册 WS 消息回调：通知 + 缓存 + 更新订阅状态
     this.websocketService.setOnMessage((msg: NtfyMessage, server: string, topic: string) => {
       console.info(`[EntryAbility] WS message received: id=${msg.id}, topic=${topic}, title=${msg.title ?? '-'}, event=${msg.event}`);
@@ -87,18 +93,20 @@ export default class EntryAbility extends UIAbility {
     const savedData = await this.storageManager.loadSubscriptions();
     this.subscriptionManager.fromJSON(savedData);
 
-    // 仅在 WS 模式下连接
-    await this.connectWebSocketsIfEnabled();
-
+    // 停止后台任务（常驻通知、心跳保活）
     if (this.backgroundTaskService) {
       await this.backgroundTaskService.stopBackgroundTask();
     }
+
+    // 重新连接 WS（回到前台时确保连接）
+    await this.connectWebSocketsIfEnabled();
   }
 
   async onBackground(): Promise<void> {
     const json = this.subscriptionManager.toJSON();
     await this.storageManager.saveSubscriptions(json);
 
+    // 启动后台长时任务（含常驻通知 + 每分钟心跳保活）
     if (this.backgroundTaskService) {
       await this.backgroundTaskService.startBackgroundTask();
     }
@@ -107,6 +115,7 @@ export default class EntryAbility extends UIAbility {
   onDestroy(): void {
     this.notificationService?.cancelAll();
     this.websocketService.disconnectAll();
+    this.websocketService.stopPing();
     if (this.backgroundTaskService) {
       this.backgroundTaskService.stopBackgroundTask();
     }

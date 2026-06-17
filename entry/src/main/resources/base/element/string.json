@@ -2,7 +2,7 @@
   "string": [
     {
       "name": "app_name",
-      "value": "ntfy"
+      "value": "NtfyPush"
     },
     {
       "name": "reason_internet",
@@ -331,6 +331,26 @@
     {
       "name": "protocol_saved",
       "value": "Protocol switched"
+    },
+    {
+      "name": "privacy_policy",
+      "value": "Privacy Policy"
+    },
+    {
+      "name": "open_source_licenses",
+      "value": "Open Source Licenses"
+    },
+    {
+      "name": "legal",
+      "value": "Legal"
+    },
+    {
+      "name": "privacy_policy_title",
+      "value": "Privacy Policy"
+    },
+    {
+      "name": "licenses_title",
+      "value": "Open Source Licenses"
     }
   ]
 }

@@ -320,6 +320,44 @@ struct Settings {
           .width('100%')
           .padding({ left: 16, right: 16, top: 10, bottom: 10 });
 
+          Divider()
+            .width('100%')
+            .color('#FFF0F0F0')
+            .margin({ left: 16, right: 16 });
+
+          // ── Legal ──
+          SectionHeader({ title: $r('app.string.legal') });
+
+          Row() {
+            Text($r('app.string.privacy_policy'))
+              .fontSize(14)
+              .fontColor('#FF333333');
+            Blank();
+            Image($r('app.media.ic_chevron'))
+              .width(16)
+              .height(16);
+          }
+          .width('100%')
+          .padding({ left: 16, right: 16, top: 10, bottom: 10 })
+          .onClick(() => {
+            router.pushUrl({ url: 'pages/Privacy' });
+          });
+
+          Row() {
+            Text($r('app.string.open_source_licenses'))
+              .fontSize(14)
+              .fontColor('#FF333333');
+            Blank();
+            Image($r('app.media.ic_chevron'))
+              .width(16)
+              .height(16);
+          }
+          .width('100%')
+          .padding({ left: 16, right: 16, top: 10, bottom: 10 })
+          .onClick(() => {
+            router.pushUrl({ url: 'pages/Licenses' });
+          });
+
           Column().height(60);
         }
         .width('100%');

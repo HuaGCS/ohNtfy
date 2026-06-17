@@ -135,6 +135,8 @@ export class SubscriptionManager {
     );
     if (idx >= 0) {
       const old = this.subscriptions[idx];
+      const newReadId = old.lastMessage?.id;
+      console.info(`[SubscriptionManager] markRead: ${topic}, lastMsgId=${newReadId}, old.lastReadId=${old.lastReadId}`);
       this.subscriptions[idx] = {
         id: old.id,
         server: old.server,
@@ -142,8 +144,10 @@ export class SubscriptionManager {
         displayName: old.displayName,
         subscribedAt: old.subscribedAt,
         lastMessage: old.lastMessage,
-        lastReadId: old.lastMessage?.id
+        lastReadId: newReadId
       };
+    } else {
+      console.warn(`[SubscriptionManager] markRead: subscription not found: ${server}/${topic}`);
     }
   }
 

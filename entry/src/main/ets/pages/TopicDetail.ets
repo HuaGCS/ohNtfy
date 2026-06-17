@@ -1,7 +1,7 @@
 import { NtfyMessage } from '../model/TopicModel';
 import { NtfyService } from '../model/NtfyService';
 import { router } from '@kit.ArkUI';
-import { globalMessageCacheService, globalSubscriptionManager, globalStorageManager } from '../entryability/EntryAbility';
+import { globalMessageCacheService, globalSubscriptionManager, globalStorageManager, globalNotificationService } from '../entryability/EntryAbility';
 
 @Entry
 @Component
@@ -37,6 +37,8 @@ struct TopicDetail {
     // 进入即标记已读 → Index 消除未读标识
     if (sub) {
       globalSubscriptionManager?.markRead(this.server, this.topic);
+      // 清除系统通知栏中该 topic 的所有通知
+      globalNotificationService?.cancelTopicNotifications(this.server, this.topic);
       globalStorageManager?.saveSubscriptions(
         globalSubscriptionManager?.toJSON() ?? '[]'
       );
@@ -50,14 +52,20 @@ struct TopicDetail {
   }
 
   /** 更新已读分界索引：基于进入页面时的 lastReadId 快照，不受 markRead 影响 */
-  private updateLastReadIndex(): void {
+  private updateLastReadIndex(fallbackIndex?: number): void {
     const lastReadId = this.lastReadIdSnapshot;
     if (lastReadId) {
       const foundIndex = this.messages.findIndex(m => m.id === lastReadId);
-      // 找到则以此为界，找不到（消息已删除）则全部视为未读
-      this.lastReadIndex = foundIndex >= 0 ? foundIndex : this.messages.length;
+      if (foundIndex >= 0) {
+        this.lastReadIndex = foundIndex;
+      } else if (fallbackIndex !== undefined && fallbackIndex >= 0) {
+        // lastReadId 消息已被删除 → 使用之前的分界值（不超出当前列表）
+        this.lastReadIndex = Math.min(fallbackIndex, this.messages.length);
+      } else {
+        // 首次加载且快照消息不在此列表中 → 全部视为未读
+        this.lastReadIndex = this.messages.length;
+      }
     } else {
-      // lastReadId 未初始化 → 全部未读
       this.lastReadIndex = this.messages.length;
     }
   }
@@ -73,6 +81,8 @@ struct TopicDetail {
       const cached = await globalMessageCacheService?.getMessages(this.server, this.topic);
       if (cached && cached.length > 0) {
         this.messages = cached; // 缓存已按 newest-first 排序
+        // 立即更新未读分界线，避免缓存渲染时 lastReadIndex 仍是 -1
+        this.updateLastReadIndex();
       }
     } catch (e) {
       // 缓存读取失败不影响网络请求
@@ -115,6 +125,9 @@ struct TopicDetail {
     } catch (e) {
       if (this.messages.length === 0) {
         this.errorMessage = '获取失败: ' + ((e as Error)?.message || String(e));
+      } else {
+        // 网络失败但有缓存数据 → 确保未读分界线已更新
+        this.updateLastReadIndex();
       }
     } finally {
       this.isLoading = false;
@@ -188,6 +201,8 @@ struct TopicDetail {
   }
 
   private doDeleteMsg(msg: NtfyMessage): void {
+    // 保存删除前的分界值，若删除的正好是 lastReadIdSnapshot 消息时作为回退
+    const prevLastReadIndex = this.lastReadIndex;
     this.messages = this.messages.filter(m => m.id !== msg.id);
     globalMessageCacheService?.removeMessage(this.server, this.topic, msg.id);
     // 同步更新 Index 页 lastMessage
@@ -196,7 +211,7 @@ struct TopicDetail {
     } else {
       globalSubscriptionManager?.clearLastMessage(this.server, this.topic);
     }
-    this.updateLastReadIndex();
+    this.updateLastReadIndex(prevLastReadIndex);
   }
 
   build() {

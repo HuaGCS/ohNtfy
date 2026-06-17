@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
   <rect width="48" height="48" rx="10" fill="#0078D4"/>
-  <text x="24" y="32" text-anchor="middle" font-size="24" font-weight="bold" fill="white" font-family="Arial">n</text>
+  <!-- Letter 'n' as path instead of text -->
+  <path d="M14 34V14h4l8 12V14h4v20h-4l-8-12v12h-4z" fill="white"/>
 </svg>

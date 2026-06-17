@@ -4,6 +4,8 @@
     "pages/AddTopic",
     "pages/TopicDetail",
     "pages/Settings",
-    "pages/About"
+    "pages/About",
+    "pages/Privacy",
+    "pages/Licenses"
   ]
 }

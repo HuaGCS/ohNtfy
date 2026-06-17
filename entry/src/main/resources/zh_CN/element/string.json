@@ -2,7 +2,7 @@
   "string": [
     {
       "name": "app_name",
-      "value": "ntfy"
+      "value": "NtfyPush"
     },
     {
       "name": "reason_internet",
@@ -331,6 +331,26 @@
     {
       "name": "protocol_saved",
       "value": "连接协议已切换"
+    },
+    {
+      "name": "privacy_policy",
+      "value": "隐私政策"
+    },
+    {
+      "name": "open_source_licenses",
+      "value": "开源许可声明"
+    },
+    {
+      "name": "legal",
+      "value": "法律信息"
+    },
+    {
+      "name": "privacy_policy_title",
+      "value": "隐私政策"
+    },
+    {
+      "name": "licenses_title",
+      "value": "开源许可声明"
     }
   ]
 }
