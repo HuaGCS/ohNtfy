@@ -308,6 +308,16 @@ struct Index {
     this.wsService.disconnect(sub.server, sub.topic);
     globalMessageCacheService?.clearTopic(sub.server, sub.topic);
     this.subscriptions = globalSubscriptionManager?.getSubscriptions() ?? [];
+    // 更新总数
+    this.totalCount = this.subscriptions.length;
+    // 清理 connectionStatus 中已删除 topic 的旧状态
+    const key = `${sub.server}_${sub.topic}`;
+    if (this.connectionStatus.has(key)) {
+      const newMap = new Map(this.connectionStatus);
+      newMap.delete(key);
+      this.connectionStatus = newMap;
+      this.updateConnectedCount();
+    }
     globalStorageManager?.saveSubscriptions(
       globalSubscriptionManager?.toJSON() ?? '[]'
     );

@@ -224,11 +224,49 @@ struct AddTopic {
     return this.serverInput.trim() || this.defaultServer;
   }
 
+  /** 严格校验 IPv4 地址（0-255，4段） */
+  private isValidIPv4(host: string): boolean {
+    const parts = host.split('.');
+    if (parts.length !== 4) return false;
+    return parts.every((part) => {
+      const num = Number(part);
+      return !isNaN(num) && num >= 0 && num <= 255 && String(num) === part;
+    });
+  }
+
+  /** 校验 URL 输入，返回错误信息，为空表示合法 */
+  private validateUrlInput(input: string): string {
+    let urlStr = input.trim();
+    if (!urlStr) return '';
+
+    // 提取主机部分
+    let hostPart = urlStr.replace(/\/+$/, '');
+    // 去掉协议前缀
+    hostPart = hostPart.replace(/^https?:\/\//, '');
+    // 去掉端口
+    hostPart = hostPart.split(':')[0];
+    // 去掉路径
+    hostPart = hostPart.split('/')[0];
+
+    if (this.looksLikeIP(hostPart)) {
+      if (!this.isValidIPv4(hostPart)) {
+        return `IP 地址格式无效："${hostPart}"，每段应在 0~255 之间`;
+      }
+    }
+    return '';
+  }
+
+  private looksLikeIP(host: string): boolean {
+    return /^\d{1,3}(\.\d{1,3}){2,3}$/.test(host);
+  }
+
   parseUrl(input: string): ParsedUrl | null {
     let urlStr = input.trim();
     urlStr = urlStr.replace(/\/+$/, '');
     if (!urlStr.startsWith('http://') && !urlStr.startsWith('https://')) {
-      const isIP = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(urlStr);
+      // 先用严格正则判断是否为 IP，避免 1922.168.0.114 被误判
+      const hostPart = urlStr.split(':')[0].split('/')[0];
+      const isIP = this.looksLikeIP(hostPart) && this.isValidIPv4(hostPart);
       urlStr = (isIP ? 'http://' : 'https://') + urlStr;
     }
     try {
@@ -282,6 +320,28 @@ struct AddTopic {
           this.errorMessage = '请输入主题名称';
           return;
         }
+      }
+    }
+
+    // 输入合法性校验
+    if (this.showAdvanced) {
+      const rawServer = this.serverInput.trim();
+      if (rawServer.length > 0) {
+        // 提取主机部分用于校验
+        let hostPart = rawServer.replace(/^https?:\/\//, '');
+        hostPart = hostPart.split(':')[0];
+        if (this.looksLikeIP(hostPart) && !this.isValidIPv4(hostPart)) {
+          this.errorMessage = `IP 地址格式无效："${hostPart}"，每段应在 0~255 之间`;
+          this.isLoading = false;
+          return;
+        }
+      }
+    } else {
+      const validationError = this.validateUrlInput(this.urlInput);
+      if (validationError) {
+        this.errorMessage = validationError;
+        this.isLoading = false;
+        return;
       }
     }
 
