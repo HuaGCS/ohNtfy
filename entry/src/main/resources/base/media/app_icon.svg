@@ -1,5 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
-  <rect width="48" height="48" rx="10" fill="#0078D4"/>
-  <!-- Letter 'n' as path instead of text -->
-  <path d="M14 34V14h4l8 12V14h4v20h-4l-8-12v12h-4z" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 216 216" width="216" height="216">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1565C0"/>
+      <stop offset="100%" style="stop-color:#0D47A1"/>
+    </linearGradient>
+  </defs>
+  <rect width="216" height="216" rx="44" fill="url(#bg)"/>
+  <!-- 通知铃铛 -->
+  <g transform="translate(108, 96)">
+    <path d="M0-52c-8 0-16 4-20 12-4 8-8 20-12 36l-4 16c-2 8-6 14-12 18-2 2-4 4-4 6 0 4 4 8 8 8h88c4 0 8-4 8-8 0-2-2-4-4-6-6-4-10-10-12-18l-4-16c-4-16-8-28-12-36-4-8-12-12-20-12z" fill="#FFFFFF"/>
+    <rect x="-8" y="30" width="16" height="6" rx="3" fill="#FFFFFF"/>
+  </g>
+  <!-- 底部弧线 -->
+  <path d="M84 150c0 12 8 20 20 20s20-8 20-20" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/>
 </svg>
