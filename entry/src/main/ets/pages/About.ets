@@ -38,14 +38,14 @@ struct About {
               .height(72)
               .borderRadius(16);
 
-            Text('ntfy')
+            Text($r('app.string.app_name'))
               .fontSize(24)
               .fontWeight(FontWeight.Bold)
               .margin({ top: 12 });
 
             Text($r('app.string.app_description'))
               .fontSize(14)
-              .fontColor('#FF666666')
+              .fontColor($r('app.color.text_secondary'))
               .margin({ top: 4 });
           }
           .width('100%')
@@ -59,7 +59,7 @@ struct About {
             AboutRow({ label: $r('app.string.architecture'), value: $r('app.string.architecture_value') });
           }
           .width('100%')
-          .backgroundColor('#FFF8F8F8')
+          .backgroundColor($r('app.color.card_secondary_bg'))
           .borderRadius(12)
           .margin({ top: 32, left: 16, right: 16 });
 
@@ -73,12 +73,12 @@ struct About {
 
             Text($r('app.string.ntfy_description'))
               .fontSize(14)
-              .fontColor('#FF444444')
+              .fontColor($r('app.color.text_body'))
               .lineHeight(22);
 
             Text($r('app.string.ntfy_source'))
               .fontSize(13)
-              .fontColor('#FF0078D4')
+              .fontColor($r('app.color.accent_color'))
               .margin({ top: 12 });
           }
           .width('100%')
@@ -95,7 +95,7 @@ struct About {
 
             Text($r('app.string.disclaimer_text'))
               .fontSize(13)
-              .fontColor('#FF888888')
+              .fontColor($r('app.color.text_muted'))
               .lineHeight(20);
           }
           .width('100%')
@@ -106,7 +106,7 @@ struct About {
           Row() {
             Text($r('app.string.source_code'))
               .fontSize(14)
-              .fontColor('#FF0078D4');
+              .fontColor($r('app.color.accent_color'));
             Blank();
             Image($r('app.media.ic_chevron'))
               .width(16)
@@ -115,7 +115,7 @@ struct About {
           .width('100%')
           .padding({ left: 16, right: 16, top: 12, bottom: 12 })
           .margin({ top: 16, left: 16, right: 16 })
-          .backgroundColor('#FFF8F8F8')
+          .backgroundColor($r('app.color.card_secondary_bg'))
           .borderRadius(12);
 
           Column().height(60);
@@ -126,7 +126,7 @@ struct About {
     }
     .width('100%')
     .height('100%')
-    .backgroundColor('#FFFFFFFF');
+    .backgroundColor($r('app.color.background'));
   }
 }
 
@@ -139,11 +139,11 @@ struct AboutRow {
     Row() {
       Text(this.label)
         .fontSize(14)
-        .fontColor('#FF333333');
+        .fontColor($r('app.color.text_primary'));
       Blank();
       Text(this.value)
         .fontSize(14)
-        .fontColor('#FF999999');
+        .fontColor($r('app.color.text_hint'));
     }
     .width('100%')
     .padding({ left: 16, right: 16, top: 12, bottom: 12 })

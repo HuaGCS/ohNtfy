@@ -121,7 +121,7 @@ struct Privacy {
     }
     .width('100%')
     .height('100%')
-    .backgroundColor('#FFFFFFFF');
+    .backgroundColor($r('app.color.background'));
   }
 }
 
@@ -140,7 +140,7 @@ struct SectionBlock {
 
       Text(this.content)
         .fontSize(14)
-        .fontColor('#FF444444')
+        .fontColor($r('app.color.text_body'))
         .lineHeight(22);
     }
     .width('100%')

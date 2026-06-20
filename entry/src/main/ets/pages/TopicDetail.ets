@@ -223,10 +223,10 @@ struct TopicDetail {
           Image($r('app.media.ic_back'))
             .width(20)
             .height(20)
-            .fillColor('#FF333333');
+            .fillColor($r('app.color.text_primary'));
           Text('返回')
             .fontSize(15)
-            .fontColor('#FF333333')
+            .fontColor($r('app.color.text_primary'))
             .margin({ left: 2 });
         }
         .padding({ left: 4, right: 8, top: 6, bottom: 6 })
@@ -241,7 +241,7 @@ struct TopicDetail {
             .fontWeight(FontWeight.Bold);
           Text(`${this.server}/${this.topic}`)
             .fontSize(11)
-            .fontColor('#FF999999');
+            .fontColor($r('app.color.text_hint'));
         }
         .alignItems(HorizontalAlign.Center);
 
@@ -250,14 +250,14 @@ struct TopicDetail {
         Image($r('app.media.ic_refresh'))
           .width(22)
           .height(22)
-          .fillColor('#FF333333')
+          .fillColor($r('app.color.text_primary'))
           .margin({ right: 16 })
           .onClick(() => this.loadMessages());
 
         Image($r('app.media.ic_send'))
           .width(22)
           .height(22)
-          .fillColor('#FF333333')
+          .fillColor($r('app.color.text_primary'))
           .onClick(() => {
             this.showPublishDialog = true;
           });
@@ -274,10 +274,10 @@ struct TopicDetail {
           LoadingProgress()
             .width(48)
             .height(48)
-            .color('#FF0078D4');
+            .color($r('app.color.accent_color'));
           Text('加载中...')
             .fontSize(14)
-            .fontColor('#FF999999')
+            .fontColor($r('app.color.text_hint'))
             .margin({ top: 12 });
         }
         .width('100%')
@@ -287,7 +287,7 @@ struct TopicDetail {
         Column() {
           Text(this.errorMessage)
             .fontSize(14)
-            .fontColor('#FFE81123');
+            .fontColor($r('app.color.error_color'));
           Button('重试')
             .margin({ top: 12 })
             .onClick(() => this.loadMessages());
@@ -299,7 +299,7 @@ struct TopicDetail {
         Column() {
           Text('暂无消息，点击上方刷新按钮加载')
             .fontSize(14)
-            .fontColor('#FF999999');
+            .fontColor($r('app.color.text_hint'));
         }
         .width('100%')
         .layoutWeight(1)
@@ -312,10 +312,10 @@ struct TopicDetail {
               LoadingProgress()
                 .width(16)
                 .height(16)
-                .color('#FF0078D4');
+                .color($r('app.color.accent_color'));
               Text(' 正在获取最新消息...')
                 .fontSize(12)
-                .fontColor('#FF999999');
+                .fontColor($r('app.color.text_hint'));
             }
             .padding({ top: 8, bottom: 4 });
           }
@@ -331,7 +331,7 @@ struct TopicDetail {
                         Text(msg.title)
                           .fontSize(16)
                           .fontWeight(FontWeight.Medium)
-                          .fontColor('#FF333333')
+                          .fontColor($r('app.color.text_primary'))
                           .maxLines(2)
                           .textOverflow({ overflow: TextOverflow.Ellipsis })
                           .layoutWeight(1);
@@ -348,7 +348,7 @@ struct TopicDetail {
                     if (msg.message) {
                       Text(msg.message)
                         .fontSize(14)
-                        .fontColor('#FF666666')
+                        .fontColor($r('app.color.text_secondary'))
                         .maxLines(5)
                         .textOverflow({ overflow: TextOverflow.Ellipsis })
                         .margin({ top: 4 })
@@ -361,9 +361,9 @@ struct TopicDetail {
                         ForEach(msg.tags, (tag: string) => {
                           Text(tag)
                             .fontSize(11)
-                            .fontColor('#FF0078D4')
+                            .fontColor($r('app.color.accent_color'))
                             .padding({ left: 8, right: 8, top: 2, bottom: 2 })
-                            .backgroundColor('#FFE6F0FA')
+                            .backgroundColor($r('app.color.tag_background'))
                             .borderRadius(4)
                             .margin({ right: 4 });
                         }, (tag: string) => tag);
@@ -375,7 +375,7 @@ struct TopicDetail {
                     // Time
                     Text(this.formatTime(msg.time))
                       .fontSize(11)
-                      .fontColor('#FFAAAAAA')
+                      .fontColor($r('app.color.text_hint'))
                       .margin({ top: 6 });
                   }
                   .width('100%')
@@ -394,7 +394,7 @@ struct TopicDetail {
                 .width('100%');
               }
               .padding(12)
-              .backgroundColor(Color.White)
+              .backgroundColor($r('app.color.card_background'))
               .borderRadius(8)
               .margin({ top: 8, left: 16, right: 16 })
               .swipeAction({
@@ -419,7 +419,7 @@ struct TopicDetail {
     }
     .width('100%')
     .height('100%')
-    .backgroundColor('#FFF5F5F5');
+    .backgroundColor($r('app.color.background'));
 
     // Publish dialog
     if (this.showPublishDialog) {
@@ -433,7 +433,7 @@ struct TopicDetail {
           TextInput({ placeholder: '标题（可选）', text: this.publishTitleInput })
             .width('100%')
             .height(44)
-            .backgroundColor('#FFF5F5F5')
+            .backgroundColor($r('app.color.input_background'))
             .borderRadius(10)
             .padding({ left: 12, right: 12 })
             .margin({ bottom: 10 })
@@ -442,15 +442,15 @@ struct TopicDetail {
           TextInput({ placeholder: '消息内容', text: this.publishMessageInput })
             .width('100%')
             .height(80)
-            .backgroundColor('#FFF5F5F5')
+            .backgroundColor($r('app.color.input_background'))
             .borderRadius(10)
             .padding({ left: 12, right: 12, top: 10, bottom: 10 })
             .onChange((value: string) => { this.publishMessageInput = value; });
 
           Row() {
             Button('取消')
-              .backgroundColor('#FFF0F0F0')
-              .fontColor('#FF333333')
+              .backgroundColor($r('app.color.button_secondary_bg'))
+              .fontColor($r('app.color.text_primary'))
               .borderRadius(20)
               .height(44)
               .layoutWeight(1)
@@ -462,7 +462,7 @@ struct TopicDetail {
               });
 
             Button('发送')
-              .backgroundColor('#FF0078D4')
+              .backgroundColor($r('app.color.accent_color'))
               .fontColor(Color.White)
               .borderRadius(20)
               .height(44)
@@ -475,13 +475,13 @@ struct TopicDetail {
           .padding({ left: 20, right: 20, bottom: 20, top: 16 });
         }
         .width('85%')
-        .backgroundColor('#FFFFFFFF')
+        .backgroundColor($r('app.color.card_background'))
         .borderRadius(16)
         .shadow({ radius: 8, color: '#30000000', offsetY: 4 });
       }
       .width('100%')
       .height('100%')
-      .backgroundColor('#40000000')
+      .backgroundColor($r('app.color.overlay_background'))
       .justifyContent(FlexAlign.Center)
       .alignItems(HorizontalAlign.Center)
       .onClick(() => {

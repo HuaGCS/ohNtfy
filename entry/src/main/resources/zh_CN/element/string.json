@@ -201,6 +201,22 @@
       "value": "ArkTS + ArkUI"
     },
     {
+      "name": "theme",
+      "value": "主题"
+    },
+    {
+      "name": "theme_follow_system",
+      "value": "跟随系统"
+    },
+    {
+      "name": "theme_light",
+      "value": "浅色"
+    },
+    {
+      "name": "theme_dark",
+      "value": "深色"
+    },
+    {
       "name": "source_code",
       "value": "源代码"
     },

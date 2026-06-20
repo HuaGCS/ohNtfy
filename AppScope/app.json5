@@ -1,6 +1,6 @@
 {
   "app": {
-    "bundleName": "com.hua.ntfy",
+    "bundleName": "com.hua.ntfypush",
     "vendor": "example",
     "versionCode": 1,
     "versionName": "1.0.0",

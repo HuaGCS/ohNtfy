@@ -395,7 +395,7 @@ struct Index {
                 .margin({ left: 8, right: 4 });
               Text(`${this.connectedCount}/${this.totalCount} 已连接`)
                 .fontSize(10)
-                .fontColor('#FF999999');
+                .fontColor($r('app.color.text_hint'));
             }
             .margin({ left: 8 });
           }
@@ -414,7 +414,7 @@ struct Index {
         }
         .width('100%')
         .height(56)
-        .backgroundColor('#FFFFFFFF')
+        .backgroundColor($r('app.color.card_background'))
         .shadow({ radius: 2, color: '#10000000', offsetY: 2 });
 
         if (this.subscriptions.length === 0) {
@@ -422,11 +422,11 @@ struct Index {
           Column() {
             Text($r('app.string.no_subscriptions'))
               .fontSize(18)
-              .fontColor('#FF666666')
+              .fontColor($r('app.color.text_secondary'))
               .margin({ top: 120 });
             Text($r('app.string.tap_to_add'))
               .fontSize(14)
-              .fontColor('#FF999999')
+              .fontColor($r('app.color.text_hint'))
               .margin({ top: 8 });
           }
           .width('100%')
@@ -472,7 +472,7 @@ struct Index {
                           .maxLines(1);
                         Text(sub.lastMessage?.title || sub.lastMessage?.message || '暂无消息')
                           .fontSize(13)
-                          .fontColor('#FF666666')
+                          .fontColor($r('app.color.text_secondary'))
                           .lineHeight(18)
                           .textOverflow({ overflow: TextOverflow.Ellipsis })
                           .maxLines(1)
@@ -486,11 +486,11 @@ struct Index {
                         if (sub.lastMessage) {
                           Text(this.formatTime(sub.lastMessage.time))
                             .fontSize(11)
-                            .fontColor('#FF999999');
+                            .fontColor($r('app.color.text_hint'));
                         }
                         Text(sub.server.replace('https://', '').split('/')[0])
                           .fontSize(10)
-                          .fontColor('#FFBBBBBB')
+                          .fontColor($r('app.color.text_tertiary'))
                           .margin({ top: 4 });
                       }
                       .alignItems(HorizontalAlign.End)
@@ -503,7 +503,7 @@ struct Index {
                     }
                     .width('100%')
                     .padding({ top: 12, bottom: 12, left: 16, right: 8 })
-                    .backgroundColor('#FFFFFFFF')
+                    .backgroundColor($r('app.color.card_background'))
                     .borderRadius(12)
                     .onClick(() => this.navigateToTopicDetail(sub));
 
@@ -534,7 +534,7 @@ struct Index {
             }
             .width('100%')
             .layoutWeight(1)
-            .backgroundColor('#FFF5F5F5')
+            .backgroundColor($r('app.color.background'))
           }
           .onRefreshing(() => {
             this.onRefresh();
@@ -545,7 +545,7 @@ struct Index {
       }
       .width('100%')
       .height('100%')
-      .backgroundColor('#FFF5F5F5');
+      .backgroundColor($r('app.color.background'));
 
       // Delete confirmation dialog
       if (this.showDeleteDialog && this.deleteTarget) {
@@ -558,18 +558,18 @@ struct Index {
 
             Text(`"${this.deleteTarget.displayName || this.deleteTarget.topic}"`)
               .fontSize(14)
-              .fontColor('#FF666666')
+              .fontColor($r('app.color.text_secondary'))
               .margin({ bottom: 4 });
 
             Text($r('app.string.delete_subscription_message'))
               .fontSize(13)
-              .fontColor('#FF999999')
+              .fontColor($r('app.color.text_hint'))
               .margin({ bottom: 20 });
 
             Row() {
               Button($r('app.string.cancel'))
-                .backgroundColor('#FFF0F0F0')
-                .fontColor('#FF333333')
+                .backgroundColor($r('app.color.button_secondary_bg'))
+                .fontColor($r('app.color.text_primary'))
                 .borderRadius(20)
                 .height(44)
                 .layoutWeight(1)
@@ -577,7 +577,7 @@ struct Index {
                 .onClick(() => this.cancelDelete());
 
               Button($r('app.string.delete'))
-                .backgroundColor('#FFD32F2F')
+                .backgroundColor($r('app.color.error_color'))
                 .fontColor(Color.White)
                 .borderRadius(20)
                 .height(44)
@@ -589,7 +589,7 @@ struct Index {
             .padding({ left: 20, right: 20, bottom: 20 });
           }
           .width('85%')
-          .backgroundColor('#FFFFFFFF')
+          .backgroundColor($r('app.color.card_background'))
           .borderRadius(16)
           .shadow({ radius: 8, color: '#30000000', offsetY: 4 });
         }

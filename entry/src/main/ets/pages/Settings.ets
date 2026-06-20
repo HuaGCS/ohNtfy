@@ -1,6 +1,6 @@
 import { globalStorageManager, globalWebSocketService } from '../entryability/EntryAbility';
 import { Constants } from '../common/Constants';
-import { common } from '@kit.AbilityKit';
+import { common, ConfigurationConstant } from '@kit.AbilityKit';
 import { router } from '@kit.ArkUI';
 
 @Entry
@@ -12,6 +12,7 @@ struct Settings {
   @State wsConnectedCount: number = 0;
   @State wsStatusText: string = '';
   @State useWebSocket: boolean = true;
+  @State themeMode: string = 'system'; // 'system' | 'light' | 'dark'
 
   aboutToAppear(): void {
     this.loadSettings();
@@ -45,6 +46,9 @@ struct Settings {
 
     const useWs = await globalStorageManager?.loadSetting('use_websocket', 'true') ?? 'true';
     this.useWebSocket = useWs === 'true';
+
+    const theme = await globalStorageManager?.loadSetting('theme_mode', 'system') ?? 'system';
+    this.themeMode = theme;
   }
 
   async saveDefaultServer(): Promise<void> {
@@ -68,6 +72,26 @@ struct Settings {
     await globalStorageManager?.saveSetting('use_websocket', String(this.useWebSocket));
     AppStorage.setOrCreate<boolean>('settingsChanged', true);
     this.showToast($r('app.string.protocol_saved'));
+  }
+
+  async saveTheme(mode: string): Promise<void> {
+    this.themeMode = mode;
+    await globalStorageManager?.saveSetting('theme_mode', mode);
+    // Apply theme immediately
+    try {
+      const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+      let colorMode = ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET;
+      if (mode === 'light') {
+        colorMode = ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT;
+      } else if (mode === 'dark') {
+        colorMode = ConfigurationConstant.ColorMode.COLOR_MODE_DARK;
+      }
+      context.getApplicationContext().setColorMode(colorMode);
+    } catch (e) {
+      console.error('Failed to set theme:', JSON.stringify(e));
+    }
+    this.showToast(mode === 'system' ? $r('app.string.theme_follow_system') :
+      mode === 'light' ? $r('app.string.theme_light') : $r('app.string.theme_dark'));
   }
 
   showToast(msg: ResourceStr): void {
@@ -141,7 +165,7 @@ struct Settings {
           TextInput({ placeholder: 'https://ntfy.sh', text: this.defaultServer })
             .width('100%')
             .height(44)
-            .backgroundColor('#FFF5F5F5')
+            .backgroundColor($r('app.color.input_background'))
             .borderRadius(8)
             .padding({ left: 12, right: 12 })
             .margin({ left: 16, right: 16 })
@@ -152,7 +176,7 @@ struct Settings {
           Button($r('app.string.save_server'))
             .width('100%')
             .height(40)
-            .backgroundColor('#FF0078D4')
+            .backgroundColor($r('app.color.accent_color'))
             .borderRadius(20)
             .fontColor(Color.White)
             .fontSize(14)
@@ -165,12 +189,12 @@ struct Settings {
           Row() {
             Text($r('app.string.polling_interval'))
               .fontSize(14)
-              .fontColor('#FF333333');
+              .fontColor($r('app.color.text_primary'));
             Blank();
             TextInput({ placeholder: '30', text: this.pollingInterval })
               .width(80)
               .height(36)
-              .backgroundColor('#FFF5F5F5')
+              .backgroundColor($r('app.color.input_background'))
               .borderRadius(8)
               .textAlign(TextAlign.Center)
               .onChange((v: string) => {
@@ -183,7 +207,7 @@ struct Settings {
           Button($r('app.string.save_interval'))
             .width('100%')
             .height(40)
-            .backgroundColor('#FF0078D4')
+            .backgroundColor($r('app.color.accent_color'))
             .borderRadius(20)
             .fontColor(Color.White)
             .fontSize(14)
@@ -197,10 +221,10 @@ struct Settings {
             Column() {
               Text(this.useWebSocket ? $r('app.string.protocol_ws') : $r('app.string.protocol_json'))
                 .fontSize(14)
-                .fontColor('#FF333333');
+                .fontColor($r('app.color.text_primary'));
               Text(this.useWebSocket ? $r('app.string.protocol_ws_desc') : $r('app.string.protocol_json_desc'))
                 .fontSize(11)
-                .fontColor('#FF999999')
+                .fontColor($r('app.color.text_hint'))
                 .margin({ top: 2 });
             }
             .alignItems(HorizontalAlign.Start);
@@ -216,13 +240,66 @@ struct Settings {
           .width('100%')
           .padding({ left: 16, right: 16 });
 
+          // ── Theme ──
+          SectionHeader({ title: $r('app.string.theme') });
+
+          Row() {
+            Text($r('app.string.theme_follow_system'))
+              .fontSize(14)
+              .fontColor($r('app.color.text_primary'));
+            Blank();
+            if (this.themeMode === 'system') {
+              Image($r('app.media.ic_check'))
+                .width(20)
+                .height(20);
+            }
+          }
+          .width('100%')
+          .padding({ left: 16, right: 16, top: 12, bottom: 12 })
+          .onClick(() => this.saveTheme('system'));
+
+          Row() {
+            Text($r('app.string.theme_light'))
+              .fontSize(14)
+              .fontColor($r('app.color.text_primary'));
+            Blank();
+            if (this.themeMode === 'light') {
+              Image($r('app.media.ic_check'))
+                .width(20)
+                .height(20);
+            }
+          }
+          .width('100%')
+          .padding({ left: 16, right: 16, top: 12, bottom: 12 })
+          .onClick(() => this.saveTheme('light'));
+
+          Row() {
+            Text($r('app.string.theme_dark'))
+              .fontSize(14)
+              .fontColor($r('app.color.text_primary'));
+            Blank();
+            if (this.themeMode === 'dark') {
+              Image($r('app.media.ic_check'))
+                .width(20)
+                .height(20);
+            }
+          }
+          .width('100%')
+          .padding({ left: 16, right: 16, top: 12, bottom: 12 })
+          .onClick(() => this.saveTheme('dark'));
+
+          Divider()
+            .width('100%')
+            .color($r('app.color.divider_color'))
+            .margin({ top: 12, left: 16, right: 16 });
+
           // ── Notifications ──
           SectionHeader({ title: $r('app.string.notifications') });
 
           Row() {
             Text($r('app.string.enable_notifications'))
               .fontSize(14)
-              .fontColor('#FF333333');
+              .fontColor($r('app.color.text_primary'));
             Blank();
             Toggle({ type: ToggleType.Switch, isOn: this.notificationsEnabled })
               .onChange((isOn: boolean) => {
@@ -236,7 +313,7 @@ struct Settings {
           Row() {
             Text($r('app.string.notification_settings'))
               .fontSize(14)
-              .fontColor('#FF333333');
+              .fontColor($r('app.color.text_primary'));
             Blank();
             Image($r('app.media.ic_chevron'))
               .width(16)
@@ -249,7 +326,7 @@ struct Settings {
 
           Divider()
             .width('100%')
-            .color('#FFF0F0F0')
+            .color($r('app.color.divider_color'))
             .margin({ top: 12, left: 16, right: 16 });
 
           // ── About ──
@@ -258,11 +335,11 @@ struct Settings {
           Row() {
             Text($r('app.string.version'))
               .fontSize(14)
-              .fontColor('#FF333333');
+              .fontColor($r('app.color.text_primary'));
             Blank();
             Text($r('app.string.version_name'))
               .fontSize(14)
-              .fontColor('#FF999999');
+              .fontColor($r('app.color.text_hint'));
           }
           .width('100%')
           .padding({ left: 16, right: 16 });
@@ -270,11 +347,11 @@ struct Settings {
           Row() {
             Text($r('app.string.sdk'))
               .fontSize(14)
-              .fontColor('#FF333333');
+              .fontColor($r('app.color.text_primary'));
             Blank();
             Text('HarmonyOS 6.1.0 (API 24)')
               .fontSize(14)
-              .fontColor('#FF999999');
+              .fontColor($r('app.color.text_hint'));
           }
           .width('100%')
           .padding({ left: 16, right: 16, top: 10 });
@@ -282,24 +359,24 @@ struct Settings {
           Row() {
             Text($r('app.string.architecture'))
               .fontSize(14)
-              .fontColor('#FF333333');
+              .fontColor($r('app.color.text_primary'));
             Blank();
             Text($r('app.string.architecture_value'))
               .fontSize(14)
-              .fontColor('#FF999999');
+              .fontColor($r('app.color.text_hint'));
           }
           .width('100%')
           .padding({ left: 16, right: 16, top: 10 });
 
           Divider()
             .width('100%')
-            .color('#FFF0F0F0')
+            .color($r('app.color.divider_color'))
             .margin({ top: 12, left: 16, right: 16 });
 
           Row() {
             Text($r('app.string.about_ntfy'))
               .fontSize(14)
-              .fontColor('#FF333333');
+              .fontColor($r('app.color.text_primary'));
             Blank();
             Image($r('app.media.ic_chevron'))
               .width(16)
@@ -314,7 +391,7 @@ struct Settings {
           Row() {
             Text($r('app.string.source_code'))
               .fontSize(14)
-              .fontColor('#FF333333');
+              .fontColor($r('app.color.text_primary'));
             Blank();
           }
           .width('100%')
@@ -322,7 +399,7 @@ struct Settings {
 
           Divider()
             .width('100%')
-            .color('#FFF0F0F0')
+            .color($r('app.color.divider_color'))
             .margin({ left: 16, right: 16 });
 
           // ── Legal ──
@@ -331,7 +408,7 @@ struct Settings {
           Row() {
             Text($r('app.string.privacy_policy'))
               .fontSize(14)
-              .fontColor('#FF333333');
+              .fontColor($r('app.color.text_primary'));
             Blank();
             Image($r('app.media.ic_chevron'))
               .width(16)
@@ -346,7 +423,7 @@ struct Settings {
           Row() {
             Text($r('app.string.open_source_licenses'))
               .fontSize(14)
-              .fontColor('#FF333333');
+              .fontColor($r('app.color.text_primary'));
             Blank();
             Image($r('app.media.ic_chevron'))
               .width(16)
@@ -366,7 +443,7 @@ struct Settings {
     }
     .width('100%')
     .height('100%')
-    .backgroundColor('#FFFFFFFF');
+    .backgroundColor($r('app.color.background'));
   }
 }
 
@@ -378,7 +455,7 @@ struct SectionHeader {
     Text(this.title)
       .fontSize(13)
       .fontWeight(FontWeight.Medium)
-      .fontColor('#FF0078D4')
+      .fontColor($r('app.color.accent_color'))
       .width('100%')
       .margin({ top: 24, left: 16, right: 16, bottom: 8 });
   }

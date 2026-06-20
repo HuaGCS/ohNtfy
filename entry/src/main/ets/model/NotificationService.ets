@@ -16,9 +16,6 @@ export class NotificationService {
   private bundleName: string;
   private notifiedIds: Set<string> = new Set();
   private static readonly MAX_NOTIFIED_CACHE = 200;
-  // 常驻占位通知 ID（用于指示后台服务正在运行）
-  private static readonly PLACEHOLDER_NOTIFICATION_ID = 0x7FFFFFFF;
-  private isPlaceholderShowing: boolean = false;
 
   constructor(context: common.UIAbilityContext) {
     this.context = context;
@@ -62,21 +59,38 @@ export class NotificationService {
     if (this.notifiedIds.has(message.id)) return;
 
     try {
-      const wantParams: Record<string, string> = {
-        'topic': topic,
-        'server': server
-      };
-      const want: Want = {
+      const msgId = message.id;
+      const baseWant: Want = {
         bundleName: this.bundleName,
         abilityName: 'EntryAbility',
-        parameters: wantParams
+        parameters: { 'topic': topic, 'server': server }
       };
-      const wantAgentInfo: wantAgent.WantAgentInfo = {
-        wants: [want],
+      const markReadWant: Want = {
+        bundleName: this.bundleName,
+        abilityName: 'EntryAbility',
+        parameters: { 'topic': topic, 'server': server, 'action': 'markRead', 'messageId': msgId }
+      };
+      const dismissWant: Want = {
+        bundleName: this.bundleName,
+        abilityName: 'EntryAbility',
+        parameters: { 'topic': topic, 'server': server, 'action': 'dismiss', 'messageId': msgId }
+      };
+
+      const clickAgent = await wantAgent.getWantAgent({
+        wants: [baseWant],
         operationType: wantAgent.OperationType.START_ABILITY,
-        requestCode: this.hashCode(message.id),
-      };
-      const agent = await wantAgent.getWantAgent(wantAgentInfo);
+        requestCode: this.hashCode(msgId),
+      });
+      const markReadAgent = await wantAgent.getWantAgent({
+        wants: [markReadWant],
+        operationType: wantAgent.OperationType.START_ABILITY,
+        requestCode: this.hashCode(msgId + '_read'),
+      });
+      const dismissAgent = await wantAgent.getWantAgent({
+        wants: [dismissWant],
+        operationType: wantAgent.OperationType.START_ABILITY,
+        requestCode: this.hashCode(msgId + '_dismiss'),
+      });
 
       const priority = message.priority ?? Constants.PRIORITY_DEFAULT;
       const isHighPri = priority >= Constants.PRIORITY_HIGH;
@@ -88,8 +102,12 @@ export class NotificationService {
       const text = message.message || '';
       const tags = message.tags ? message.tags.map(t => `:${t}:`).join(' ') : '';
 
+      // 构建通知时更新角标数
+      const activeNotifications = await notificationManager.getActiveNotificationCount().catch(() => 0);
+      const badgeNumber = activeNotifications + 1;
+
       const notificationRequest: notificationManager.NotificationRequest = {
-        id: this.hashCode(message.id),
+        id: this.hashCode(msgId),
         content: {
           notificationContentType: notificationManager.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
           normal: {
@@ -100,8 +118,21 @@ export class NotificationService {
         } as notificationManager.NotificationContent,
         notificationSlotType: slotType,
         showDeliveryTime: true,
-        wantAgent: agent,
-        groupName: `${server}_${topic}`
+        wantAgent: clickAgent,
+        groupName: `${server}_${topic}`,
+        badgeNumber: badgeNumber > 99 ? 99 : badgeNumber,
+        // 高优先级消息点击后保留通知（标记已读后才消失）
+        tapDismissed: !isHighPri,
+        actionButtons: [
+          {
+            title: '标记已读',
+            wantAgent: markReadAgent
+          },
+          {
+            title: '忽略',
+            wantAgent: dismissAgent
+          }
+        ]
       };
 
       await notificationManager.publish(notificationRequest);
@@ -174,65 +205,6 @@ export class NotificationService {
 
   clearNotifiedIds(): void {
     this.notifiedIds.clear();
-  }
-
-  /**
-   * 发布常驻占位通知，告知用户 ntfy 正在后台运行
-   * 系统对有关联常驻通知的后台进程会降低挂起优先级
-   */
-  async publishPlaceholder(topicCount: number, connectedCount: number): Promise<void> {
-    try {
-      const notificationRequest: notificationManager.NotificationRequest = {
-        id: NotificationService.PLACEHOLDER_NOTIFICATION_ID,
-        content: {
-          notificationContentType: notificationManager.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
-          normal: {
-            title: 'ntfy 正在后台运行',
-            text: `${topicCount} 个订阅 · ${connectedCount} 个连接`,
-            additionalText: '正在监听推送通知...'
-          }
-        } as notificationManager.NotificationContent,
-        notificationSlotType: notificationManager.SlotType.SERVICE_INFORMATION,
-        showDeliveryTime: false,
-        tapDismissed: false  // 点击不自动清除（未携带 wantAgent 时也保留）
-      };
-
-      // isOngoing 和 isUnremovable 在 API 24 中为预留字段（暂未支持）
-      await notificationManager.publish(notificationRequest);
-      this.isPlaceholderShowing = true;
-      console.info('[ntfy] Placeholder notification published');
-    } catch (e) {
-      console.error('[ntfy] Failed to publish placeholder notification:', (e as BusinessError).message);
-    }
-  }
-
-  /**
-   * 更新常驻通知内容（如连接数变化）
-   */
-  async updatePlaceholder(topicCount: number, connectedCount: number): Promise<void> {
-    if (!this.isPlaceholderShowing) return;
-    await this.publishPlaceholder(topicCount, connectedCount);
-  }
-
-  /**
-   * 取消常驻占位通知
-   */
-  async cancelPlaceholder(): Promise<void> {
-    if (!this.isPlaceholderShowing) return;
-    try {
-      await notificationManager.cancel(NotificationService.PLACEHOLDER_NOTIFICATION_ID);
-      this.isPlaceholderShowing = false;
-      console.info('[ntfy] Placeholder notification cancelled');
-    } catch (e) {
-      console.error('[ntfy] Failed to cancel placeholder notification:', (e as BusinessError).message);
-    }
-  }
-
-  /**
-   * 查询常驻通知是否正在显示
-   */
-  isPlaceholderActive(): boolean {
-    return this.isPlaceholderShowing;
   }
 
   private hashCode(str: string): number {

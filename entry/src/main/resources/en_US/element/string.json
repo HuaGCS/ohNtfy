@@ -201,6 +201,22 @@
       "value": "ArkTS + ArkUI"
     },
     {
+      "name": "theme",
+      "value": "Theme"
+    },
+    {
+      "name": "theme_follow_system",
+      "value": "System"
+    },
+    {
+      "name": "theme_light",
+      "value": "Light"
+    },
+    {
+      "name": "theme_dark",
+      "value": "Dark"
+    },
+    {
       "name": "source_code",
       "value": "Source Code"
     },

@@ -2,83 +2,83 @@
   "color": [
     {
       "name": "start_window_background",
-      "value": "#FFFFFFFF"
+      "value": "#FF1C1C1E"
     },
     {
       "name": "background",
-      "value": "#FFF5F5F5"
+      "value": "#FF1C1C1E"
     },
     {
       "name": "card_background",
-      "value": "#FFFFFFFF"
+      "value": "#FF2C2C2E"
     },
     {
       "name": "card_secondary_bg",
-      "value": "#FFF8F8F8"
+      "value": "#FF2C2C2E"
     },
     {
       "name": "input_background",
-      "value": "#FFF5F5F5"
+      "value": "#FF3A3A3C"
     },
     {
       "name": "button_secondary_bg",
-      "value": "#FFF0F0F0"
+      "value": "#FF3A3A3C"
     },
     {
       "name": "tag_background",
-      "value": "#FFE6F0FA"
+      "value": "#FF1A3A5C"
     },
     {
       "name": "license_badge_bg",
-      "value": "#FFE8F4FF"
+      "value": "#FF1A3A5C"
     },
     {
       "name": "overlay_background",
-      "value": "#40000000"
+      "value": "#80000000"
     },
     {
       "name": "text_primary",
-      "value": "#FF333333"
+      "value": "#FFE0E0E0"
     },
     {
       "name": "text_secondary",
-      "value": "#FF666666"
+      "value": "#FF8E8E93"
     },
     {
       "name": "text_hint",
-      "value": "#FF999999"
+      "value": "#FF636366"
     },
     {
       "name": "text_tertiary",
-      "value": "#FFBBBBBB"
+      "value": "#FF48484A"
     },
     {
       "name": "text_body",
-      "value": "#FF444444"
+      "value": "#FFCDCDCD"
     },
     {
       "name": "text_muted",
-      "value": "#FF888888"
+      "value": "#FF8E8E93"
     },
     {
       "name": "text_notice",
-      "value": "#FF555555"
+      "value": "#FFAAAAAA"
     },
     {
       "name": "divider_color",
-      "value": "#FFF0F0F0"
+      "value": "#FF383838"
     },
     {
       "name": "accent_color",
-      "value": "#FF0078D4"
+      "value": "#FF4FC3F7"
     },
     {
       "name": "error_color",
-      "value": "#FFD32F2F"
+      "value": "#FFEF5350"
     },
     {
       "name": "success_color",
-      "value": "#FF4CAF50"
+      "value": "#FF66BB6A"
     },
     {
       "name": "connecting_color",
@@ -86,7 +86,7 @@
     },
     {
       "name": "disconnected_color",
-      "value": "#FF9E9E9E"
+      "value": "#FF636366"
     },
     {
       "name": "delete_color",
@@ -94,19 +94,19 @@
     },
     {
       "name": "priority_max",
-      "value": "#FFD32F2F"
+      "value": "#FFEF5350"
     },
     {
       "name": "priority_high",
-      "value": "#FFF57C00"
+      "value": "#FFFFA726"
     },
     {
       "name": "priority_default",
-      "value": "#FF0078D4"
+      "value": "#FF42A5F5"
     },
     {
       "name": "priority_low",
-      "value": "#FF388E3C"
+      "value": "#FF66BB6A"
     },
     {
       "name": "priority_min",

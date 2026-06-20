@@ -19,6 +19,16 @@ struct AddTopic {
   @State showAdvanced: boolean = false;
   @State serverInput: string = '';
   @State topicInput: string = '';
+  @State defaultServer: string = Constants.DEFAULT_SERVER;
+
+  aboutToAppear(): void {
+    this.loadDefaultServer();
+  }
+
+  private async loadDefaultServer(): Promise<void> {
+    this.defaultServer = await globalStorageManager?.loadSetting('default_server', Constants.DEFAULT_SERVER)
+      ?? Constants.DEFAULT_SERVER;
+  }
 
   build() {
     Column() {
@@ -55,13 +65,13 @@ struct AddTopic {
             .width('100%')
             .margin({ top: 24, bottom: 8, left: 16, right: 16 });
 
-          TextInput({ placeholder: $r('app.string.topic_url_hint'), text: this.urlInput })
+          TextInput({ placeholder: `${this.defaultServer}/mytopic`, text: this.urlInput })
             .width('100%')
             .height(48)
-            .backgroundColor('#FFF5F5F5')
+            .backgroundColor($r('app.color.input_background'))
             .borderRadius(12)
             .padding({ left: 16, right: 16 })
-            .placeholderColor('#FFBBBBBB')
+            .placeholderColor($r('app.color.text_tertiary'))
             .onChange((value: string) => {
               this.urlInput = value;
               this.errorMessage = '';
@@ -70,7 +80,7 @@ struct AddTopic {
           // Toggle advanced mode
           Text(this.showAdvanced ? '使用简单模式' : '使用高级模式（手动输入服务器和主题）')
             .fontSize(12)
-            .fontColor('#FF0078D4')
+            .fontColor($r('app.color.accent_color'))
             .margin({ top: 8, left: 16, right: 16 })
             .onClick(() => {
               this.showAdvanced = !this.showAdvanced;
@@ -84,13 +94,13 @@ struct AddTopic {
               .width('100%')
               .margin({ top: 16, bottom: 8, left: 16, right: 16 });
 
-            TextInput({ placeholder: 'https://ntfy.sh', text: this.serverInput })
+            TextInput({ placeholder: this.defaultServer, text: this.serverInput })
               .width('100%')
               .height(48)
-              .backgroundColor('#FFF5F5F5')
+              .backgroundColor($r('app.color.input_background'))
               .borderRadius(12)
               .padding({ left: 16, right: 16 })
-              .placeholderColor('#FFBBBBBB')
+              .placeholderColor($r('app.color.text_tertiary'))
               .onChange((value: string) => {
                 this.serverInput = value;
                 this.errorMessage = '';
@@ -105,10 +115,10 @@ struct AddTopic {
             TextInput({ placeholder: 'mytopic', text: this.topicInput })
               .width('100%')
               .height(48)
-              .backgroundColor('#FFF5F5F5')
+              .backgroundColor($r('app.color.input_background'))
               .borderRadius(12)
               .padding({ left: 16, right: 16 })
-              .placeholderColor('#FFBBBBBB')
+              .placeholderColor($r('app.color.text_tertiary'))
               .onChange((value: string) => {
                 this.topicInput = value;
                 this.errorMessage = '';
@@ -125,10 +135,10 @@ struct AddTopic {
           TextInput({ placeholder: $r('app.string.my_topic_hint'), text: this.displayNameInput })
             .width('100%')
             .height(48)
-            .backgroundColor('#FFF5F5F5')
+            .backgroundColor($r('app.color.input_background'))
             .borderRadius(12)
             .padding({ left: 16, right: 16 })
-            .placeholderColor('#FFBBBBBB')
+            .placeholderColor($r('app.color.text_tertiary'))
             .onChange((value: string) => {
               this.displayNameInput = value;
             });
@@ -137,15 +147,15 @@ struct AddTopic {
           if (!this.showAdvanced && this.urlInput.length > 0) {
             Text(this.parsePreviewText())
               .fontSize(12)
-              .fontColor('#FF999999')
+              .fontColor($r('app.color.text_hint'))
               .width('100%')
               .margin({ top: 8, left: 16, right: 16 });
           }
 
-          if (this.showAdvanced && this.serverInput.length > 0 && this.topicInput.length > 0) {
-            Text(`服务器：${this.serverInput}  主题：${this.topicInput}`)
+          if (this.showAdvanced && this.topicInput.length > 0) {
+            Text(`服务器：${this.getPreviewServer()}  主题：${this.topicInput}`)
               .fontSize(12)
-              .fontColor('#FF999999')
+              .fontColor($r('app.color.text_hint'))
               .width('100%')
               .margin({ top: 8, left: 16, right: 16 });
           }
@@ -154,7 +164,7 @@ struct AddTopic {
           if (this.errorMessage.length > 0) {
             Text(this.errorMessage)
               .fontSize(13)
-              .fontColor('#FFD32F2F')
+              .fontColor($r('app.color.error_color'))
               .width('100%')
               .margin({ top: 8, left: 16, right: 16 });
           }
@@ -175,7 +185,7 @@ struct AddTopic {
           }
           .width('100%')
           .height(50)
-          .backgroundColor('#FF0078D4')
+          .backgroundColor($r('app.color.accent_color'))
           .borderRadius(25)
           .margin({ top: 32, left: 16, right: 16 })
           .enabled(!this.isLoading && this.isInputValid())
@@ -188,12 +198,12 @@ struct AddTopic {
     }
     .width('100%')
     .height('100%')
-    .backgroundColor('#FFFFFFFF');
+    .backgroundColor($r('app.color.background'));
   }
 
   isInputValid(): boolean {
     if (this.showAdvanced) {
-      return this.serverInput.trim().length > 0 && this.topicInput.trim().length > 0;
+      return this.topicInput.trim().length > 0;
     }
     return this.urlInput.trim().length > 0;
   }
@@ -203,7 +213,15 @@ struct AddTopic {
     if (parsed) {
       return `服务器：${parsed.server}  主题：${parsed.topic}`;
     }
+    const topic = this.urlInput.trim();
+    if (topic.length > 0) {
+      return `服务器：${this.defaultServer}  主题：${topic}`;
+    }
     return '';
+  }
+
+  getPreviewServer(): string {
+    return this.serverInput.trim() || this.defaultServer;
   }
 
   parseUrl(input: string): ParsedUrl | null {
@@ -237,23 +255,34 @@ struct AddTopic {
   }
 
   async doSubscribe(): Promise<void> {
-    let server: string;
+    let server: string = this.defaultServer;
     let topic: string;
 
     if (this.showAdvanced) {
-      server = this.serverInput.trim().replace(/\/+$/, '');
       topic = this.topicInput.trim();
-      if (!server.startsWith('http://') && !server.startsWith('https://')) {
-        server = 'https://' + server;
+      if (!topic) {
+        this.errorMessage = '请输入主题名称';
+        return;
+      }
+      const rawServer = this.serverInput.trim();
+      if (rawServer.length > 0) {
+        server = rawServer.replace(/\/+$/, '');
+        if (!server.startsWith('http://') && !server.startsWith('https://')) {
+          server = 'https://' + server;
+        }
       }
     } else {
       const parsed = this.parseUrl(this.urlInput);
-      if (!parsed) {
-        this.errorMessage = 'URL 格式无效';
-        return;
+      if (parsed) {
+        server = parsed.server;
+        topic = parsed.topic;
+      } else {
+        topic = this.urlInput.trim();
+        if (!topic) {
+          this.errorMessage = '请输入主题名称';
+          return;
+        }
       }
-      server = parsed.server;
-      topic = parsed.topic;
     }
 
     this.isLoading = true;
@@ -279,7 +308,6 @@ struct AddTopic {
         displayName: this.displayNameInput || topic,
         subscribedAt: Math.floor(Date.now() / 1000),
         lastMessage: result.length > 0 ? result[result.length - 1] : undefined
-        // lastReadId 留空，由 updateLastMessage 自动初始化
       };
 
       globalSubscriptionManager?.addSubscription(sub);
@@ -287,7 +315,6 @@ struct AddTopic {
         globalSubscriptionManager?.toJSON() ?? '[]'
       );
 
-      // Start WebSocket connection for this subscription
       globalWebSocketService?.connect(server, topic);
 
       router.back();

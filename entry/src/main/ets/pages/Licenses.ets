@@ -73,7 +73,7 @@ struct Licenses {
               + 'Special thanks to the open source community and all contributors '
               + 'who make software development possible.')
               .fontSize(14)
-              .fontColor('#FF444444')
+              .fontColor($r('app.color.text_body'))
               .lineHeight(22);
           }
           .width('100%')
@@ -88,7 +88,7 @@ struct Licenses {
     }
     .width('100%')
     .height('100%')
-    .backgroundColor('#FFFFFFFF');
+    .backgroundColor($r('app.color.background'));
   }
 }
 
@@ -110,8 +110,8 @@ struct LicenseBlock {
 
         Text(this.license)
           .fontSize(12)
-          .fontColor('#FF0078D4')
-          .backgroundColor('#FFE8F4FF')
+          .fontColor($r('app.color.accent_color'))
+          .backgroundColor($r('app.color.license_badge_bg'))
           .borderRadius(4)
           .padding({ left: 8, right: 8, top: 2, bottom: 2 });
       }
@@ -120,21 +120,21 @@ struct LicenseBlock {
       if (this.version !== '') {
         Text('Version: ' + this.version)
           .fontSize(12)
-          .fontColor('#FF999999')
+          .fontColor($r('app.color.text_hint'))
           .width('100%')
           .margin({ top: 4 });
       }
 
       Text(this.notice)
         .fontSize(13)
-        .fontColor('#FF555555')
+        .fontColor($r('app.color.text_notice'))
         .lineHeight(20)
         .width('100%')
         .margin({ top: 8 });
     }
     .width('100%')
     .padding(16)
-    .backgroundColor('#FFF8F8F8')
+    .backgroundColor($r('app.color.card_secondary_bg'))
     .borderRadius(12)
     .margin({ top: 12, left: 16, right: 16 });
   }
