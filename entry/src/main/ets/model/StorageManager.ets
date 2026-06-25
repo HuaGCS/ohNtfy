@@ -6,7 +6,7 @@ import { Constants } from '../common/Constants';
 export class StorageManager {
   private prefs: preferences.Preferences | null = null;
 
-  async initialize(context: common.UIAbilityContext): Promise<void> {
+  async initialize(context: common.Context): Promise<void> {
     try {
       this.prefs = await preferences.getPreferences(context, 'ntfy_preferences');
     } catch (e) {

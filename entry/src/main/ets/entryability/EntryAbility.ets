@@ -2,30 +2,29 @@ import { UIAbility, AbilityConstant, Want, ConfigurationConstant } from '@kit.Ab
 import { window } from '@kit.ArkUI';
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
 import { BusinessError } from '@kit.BasicServicesKit';
+import { notificationManager } from '@kit.NotificationKit';
 import { NotificationService } from '../model/NotificationService';
 import { StorageManager } from '../model/StorageManager';
 import { SubscriptionManager } from '../model/TopicModel';
-import { BackgroundTaskService } from '../model/BackgroundTaskService';
 import { MessageCacheService } from '../model/MessageCacheService';
 import { WebSocketService } from '../model/WebSocketService';
-import { NtfyMessage } from '../model/TopicModel';
+import { BackgroundTaskService } from '../model/BackgroundTaskService';
 
+// 导出全局实例
 export let globalStorageManager: StorageManager;
-export let globalNotificationService: NotificationService;
 export let globalSubscriptionManager: SubscriptionManager;
-export let globalBackgroundTaskService: BackgroundTaskService;
-export let globalMessageCacheService: MessageCacheService;
 export let globalWebSocketService: WebSocketService;
+export let globalMessageCacheService: MessageCacheService;
+export let globalNotificationService: NotificationService;
+export let globalBackgroundTaskService: BackgroundTaskService;
 
 export default class EntryAbility extends UIAbility {
   private storageManager: StorageManager = new StorageManager();
-  private notificationService: NotificationService | null = null;
   private subscriptionManager: SubscriptionManager = new SubscriptionManager();
+  private notificationService: NotificationService | null = null;
   private backgroundTaskService: BackgroundTaskService | null = null;
   private messageCacheService: MessageCacheService | null = null;
   private websocketService: WebSocketService;
-
-  // 短时任务ID，用于退后台过渡
   private suspendDelayRequestId: number = -1;
 
   constructor() {
@@ -34,37 +33,46 @@ export default class EntryAbility extends UIAbility {
   }
 
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
-    this.notificationService = new NotificationService(this.context);
-    // 传入 subscriptionManager 以支持数据传输证明
-    this.backgroundTaskService = new BackgroundTaskService(this.context, this.subscriptionManager);
+    const bundleName = this.context.abilityInfo.bundleName;
+    this.notificationService = new NotificationService(bundleName);
+    this.backgroundTaskService = new BackgroundTaskService(this.context, this.subscriptionManager, bundleName);
     this.messageCacheService = new MessageCacheService(this.storageManager);
 
+    // 导出全局实例
     globalStorageManager = this.storageManager;
-    globalNotificationService = this.notificationService;
     globalSubscriptionManager = this.subscriptionManager;
+    globalNotificationService = this.notificationService;
     globalBackgroundTaskService = this.backgroundTaskService;
     globalMessageCacheService = this.messageCacheService;
     globalWebSocketService = this.websocketService;
 
-    // 注册 WS 消息回调：通知 + 缓存 + 更新订阅状态
-    this.websocketService.setOnMessage((msg: NtfyMessage, server: string, topic: string) => {
-      console.info(`[EntryAbility] WS message received: id=${msg.id}, topic=${topic}, title=${msg.title ?? '-'}, event=${msg.event}`);
-
-      if (this.notificationService) {
-        this.notificationService.showNotification(msg, server, topic);
-      }
-      if (this.messageCacheService) {
-        this.messageCacheService.addMessages(server, topic, [msg]);
-      }
-      this.subscriptionManager.updateLastMessage(server, topic, msg);
-      console.info(`[EntryAbility] WS message processed: ${topic}`);
-    });
+    // 启动后台 AppServiceExtensionAbility（负责 WS 连接 + 通知发布）
+    try {
+      const serviceWant: Want = {
+        bundleName: this.context.abilityInfo.bundleName,
+        abilityName: 'ServiceExtAbility'
+      };
+      this.context.startAbility(serviceWant).catch((e: BusinessError) => {
+        console.error(`[EntryAbility] Failed to start ServiceExtAbility: ${e.code} ${e.message}`);
+      });
+      console.info('[EntryAbility] ServiceExtAbility start requested');
+    } catch (e) {
+      const err = e as BusinessError;
+      console.error(`[EntryAbility] startAbility error: ${err.code} ${err.message}`);
+    }
   }
 
   async onWindowStageCreate(windowStage: window.WindowStage): Promise<void> {
     await this.storageManager.initialize(this.context);
+
+    // 初始化通知渠道 + 请求通知权限（仅在 UIAbility 上下文可用）
     if (this.notificationService) {
       await this.notificationService.initialize();
+    }
+    try {
+      await notificationManager.requestEnableNotification(this.context);
+    } catch (_e) {
+      // ignore
     }
 
     const savedData = await this.storageManager.loadSubscriptions();
@@ -72,9 +80,6 @@ export default class EntryAbility extends UIAbility {
 
     // 加载并应用主题
     await this.applySavedTheme();
-
-    // 仅在 WS 模式下连接
-    await this.connectWebSocketsIfEnabled();
 
     windowStage.loadContent('pages/Index', (err) => {
       if (err) {
@@ -89,19 +94,16 @@ export default class EntryAbility extends UIAbility {
     const server = want?.parameters?.['server'] as string;
     const messageId = want?.parameters?.['messageId'] as string;
 
-    // 通知按钮操作
     if (action === 'dismiss' && messageId && this.notificationService) {
       this.notificationService.cancelNotification(messageId);
       return;
     }
     if (action === 'markRead' && messageId && this.notificationService) {
-      // 标记已读：取消通知，下次不再弹出
       this.notificationService.cancelNotification(messageId);
       this.subscriptionManager.markRead(server, topic);
       return;
     }
 
-    // 点击通知正文：打开对应主题
     if (topic && server) {
       AppStorage.setOrCreate<string>('navigateToTopic', topic);
       AppStorage.setOrCreate<string>('navigateToServer', server);
@@ -112,43 +114,46 @@ export default class EntryAbility extends UIAbility {
     const savedData = await this.storageManager.loadSubscriptions();
     this.subscriptionManager.fromJSON(savedData);
 
-    // 停止后台任务（常驻通知、心跳保活）
+    // 停止后台任务（回到前台不需要保活）
     if (this.backgroundTaskService) {
       await this.backgroundTaskService.stopBackgroundTask();
     }
 
-    // 取消短时任务（如果有）
     if (this.suspendDelayRequestId > 0) {
       backgroundTaskManager.cancelSuspendDelay(this.suspendDelayRequestId);
       this.suspendDelayRequestId = -1;
     }
 
-    // 回到前台：清空所有旧连接（可能已悬挂），重新建立
-    this.websocketService.reconnectAll();
-
-    // 重新连接 WS（回到前台时确保连接）
-    await this.connectWebSocketsIfEnabled();
+    // 通知后台服务重新加载数据
+    try {
+      const serviceWant: Want = {
+        bundleName: this.context.abilityInfo.bundleName,
+        abilityName: 'ServiceExtAbility'
+      };
+      this.context.startAbility(serviceWant).catch((_e: BusinessError) => {});
+    } catch (_e) {
+      // ignore
+    }
   }
 
   async onBackground(): Promise<void> {
     const json = this.subscriptionManager.toJSON();
     await this.storageManager.saveSubscriptions(json);
 
-    // 第一步：申请短时任务作为过渡（最长3分钟）
-    // 确保在长时任务申请完成前进程不会被挂起
+    // 申请短时任务作为过渡
     try {
       const delayInfo = backgroundTaskManager.requestSuspendDelay('ntfy preparing background task', () => {
         console.info('[ntfy] Suspend delay about to expire');
       });
       this.suspendDelayRequestId = delayInfo.requestId;
-      console.info(`[ntfy] Suspend delay acquired: ${delayInfo.actualDelayTime}ms`);
     } catch (e) {
       const err = e as BusinessError;
       console.error(`[ntfy] requestSuspendDelay failed: ${err.code} ${err.message}`);
     }
 
-    // 第二步：启动长时任务（包含数据传输证明、WS保活等）
+    // 启动长时任务（数据传输证明 + WS 保活）
     if (this.backgroundTaskService) {
+      this.websocketService.reconnectAll();
       await this.backgroundTaskService.startBackgroundTask();
     }
   }
@@ -159,42 +164,11 @@ export default class EntryAbility extends UIAbility {
     this.websocketService.stopPing();
     if (this.backgroundTaskService) {
       this.backgroundTaskService.stopBackgroundTask();
+      this.backgroundTaskService.destroy();
     }
     if (this.messageCacheService) {
       this.messageCacheService.clearAll();
     }
-  }
-
-  private async connectWebSocketsIfEnabled(): Promise<void> {
-    const useWs = await this.storageManager.loadSetting('use_websocket', 'true');
-    console.info(`[EntryAbility] connectWebSocketsIfEnabled: use_websocket=${useWs}`);
-    if (useWs !== 'true') {
-      this.websocketService.disconnectAll();
-      return;
-    }
-    const subs = this.subscriptionManager.getSubscriptions();
-    console.info(`[EntryAbility] Connecting WS for ${subs.length} subscriptions`);
-
-    // 按服务器分组，每台服务器只连一次（共享连接）
-    const serverTopics = new Map<string, string[]>();
-    subs.forEach(sub => {
-      const list = serverTopics.get(sub.server);
-      if (list) {
-        list.push(sub.topic);
-      } else {
-        serverTopics.set(sub.server, [sub.topic]);
-      }
-    });
-
-    // 每台服务器独立连接，不同服务器之间错开 150ms
-    let delay = 0;
-    serverTopics.forEach((topics, server) => {
-      setTimeout(() => {
-        console.info(`[EntryAbility] WS connecting: ${server} topics=[${topics.join(',')}]`);
-        this.websocketService.connectTopics(server, topics);
-      }, delay);
-      delay += 150;
-    });
   }
 
   private async applySavedTheme(): Promise<void> {

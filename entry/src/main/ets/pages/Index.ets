@@ -1,6 +1,6 @@
 import {
   globalStorageManager, globalSubscriptionManager, globalNotificationService,
-  globalWebSocketService, globalBackgroundTaskService, globalMessageCacheService
+  globalWebSocketService, globalMessageCacheService
 } from '../entryability/EntryAbility';
 import { TopicSubscription, NtfyMessage } from '../model/TopicModel';
 import { NtfyService } from '../model/NtfyService';

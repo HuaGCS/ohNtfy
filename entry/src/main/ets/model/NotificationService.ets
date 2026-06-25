@@ -1,62 +1,30 @@
 import { notificationManager } from '@kit.NotificationKit';
-import { wantAgent, common, Want } from '@kit.AbilityKit';
+import { wantAgent, Want } from '@kit.AbilityKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { NtfyMessage } from './TopicModel';
 import { Constants } from '../common/Constants';
 
-interface NotificationSlot {
-  slotType: notificationManager.SlotType;
-  level: number;
-  desc: string;
-  vibrationEnabled: boolean;
-}
-
 export class NotificationService {
-  private context: common.UIAbilityContext;
   private bundleName: string;
   private notifiedIds: Set<string> = new Set();
   private static readonly MAX_NOTIFIED_CACHE = 200;
 
-  constructor(context: common.UIAbilityContext) {
-    this.context = context;
-    this.bundleName = context.abilityInfo.bundleName;
+  constructor(bundleName: string) {
+    this.bundleName = bundleName;
   }
 
   async initialize(): Promise<void> {
     try {
-      // Add notification slots for different priority levels
-      const slots: NotificationSlot[] = [
-        {
-          slotType: notificationManager.SlotType.SOCIAL_COMMUNICATION,
-          level: 4,
-          desc: '高优先级通知',
-          vibrationEnabled: true
-        },
-        {
-          slotType: notificationManager.SlotType.SERVICE_INFORMATION,
-          level: 3,
-          desc: '普通优先级通知',
-          vibrationEnabled: false
-        }
-      ];
-
-      for (const slot of slots) {
-        try {
-          await notificationManager.addSlot(slot.slotType);
-        } catch (e) {
-          // Slot may already exist, ignore
-        }
-      }
-
-      await notificationManager.requestEnableNotification(this.context);
+      await notificationManager.addSlot(notificationManager.SlotType.SOCIAL_COMMUNICATION);
+      await notificationManager.addSlot(notificationManager.SlotType.SERVICE_INFORMATION);
     } catch (e) {
-      console.error('Failed to init notifications:', (e as BusinessError).message);
+      console.error('Failed to init notification slots:', (e as BusinessError).message);
     }
   }
 
   async showNotification(message: NtfyMessage, server: string, topic: string): Promise<void> {
-    // 避免重复通知
     if (this.notifiedIds.has(message.id)) return;
+    if (message.event !== 'message') return;
 
     try {
       const msgId = message.id;
@@ -102,10 +70,6 @@ export class NotificationService {
       const text = message.message || '';
       const tags = message.tags ? message.tags.map(t => `:${t}:`).join(' ') : '';
 
-      // 构建通知时更新角标数
-      const activeNotifications = await notificationManager.getActiveNotificationCount().catch(() => 0);
-      const badgeNumber = activeNotifications + 1;
-
       const notificationRequest: notificationManager.NotificationRequest = {
         id: this.hashCode(msgId),
         content: {
@@ -120,8 +84,6 @@ export class NotificationService {
         showDeliveryTime: true,
         wantAgent: clickAgent,
         groupName: `${server}_${topic}`,
-        badgeNumber: badgeNumber > 99 ? 99 : badgeNumber,
-        // 高优先级消息点击后保留通知（标记已读后才消失）
         tapDismissed: !isHighPri,
         actionButtons: [
           {
@@ -137,7 +99,6 @@ export class NotificationService {
 
       await notificationManager.publish(notificationRequest);
 
-      // 仅在发布成功后标记为已通知，防止失败后永久跳过
       this.notifiedIds.add(message.id);
       while (this.notifiedIds.size > NotificationService.MAX_NOTIFIED_CACHE) {
         const first = this.notifiedIds.values().next().value as string;
@@ -145,29 +106,6 @@ export class NotificationService {
       }
     } catch (e) {
       console.error('Failed to show notification:', (e as BusinessError).message);
-    }
-  }
-
-  async showGroupSummary(server: string, topic: string, count: number): Promise<void> {
-    try {
-      const groupKey = `${server}_${topic}`;
-      const notificationRequest: notificationManager.NotificationRequest = {
-        id: this.hashCode(`summary_${groupKey}`),
-        content: {
-          notificationContentType: notificationManager.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
-          normal: {
-            title: topic,
-            text: `${count} 条新消息`,
-            additionalText: server
-          }
-        } as notificationManager.NotificationContent,
-        notificationSlotType: notificationManager.SlotType.SERVICE_INFORMATION,
-        showDeliveryTime: false,
-        groupName: groupKey
-      };
-      await notificationManager.publish(notificationRequest);
-    } catch (e) {
-      console.error('Failed to show summary:', (e as BusinessError).message);
     }
   }
 

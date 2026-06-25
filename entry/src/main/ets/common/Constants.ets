@@ -31,7 +31,7 @@ export class Constants {
     5: '#FFD32F2F'
   };
 
-  // WebSocket settings（优化：缩短间隔以提高保活效果）
+  // WebSocket settings
   static readonly WS_MAX_RECONNECT_ATTEMPTS = 10;
   static readonly WS_INITIAL_RECONNECT_DELAY = 1000;
   static readonly WS_MAX_RECONNECT_DELAY = 60000;
@@ -40,11 +40,11 @@ export class Constants {
   // Notification settings
   static readonly NOTIFICATION_MAX_CACHE_IDS = 200;
 
-  // Background polling（优化：缩短到2分钟，配合数据传输证明）
-  static readonly BACKGROUND_HEARTBEAT_INTERVAL_MS = 60000;
-
-  // 数据传输证明间隔（5分钟）
-  static readonly DATA_TRANSFER_PROOF_INTERVAL_MS = 5 * 60 * 1000;
+  // Background heartbeat / data transfer proof: 30 seconds
+  // 系统要求 DATA_TRANSFER 模式下持续60秒内不低于16KB/s
+  // 30秒间隔的 HTTP poll + WebSocket keepalive 可满足该要求
+  static readonly BACKGROUND_HEARTBEAT_INTERVAL_MS = 30000;
+  static readonly DATA_TRANSFER_PROOF_INTERVAL_MS = 30000;
 
   // 后台任务取消后重新申请延迟（3秒）
   static readonly BACKGROUND_REAPPLY_DELAY_MS = 3000;
